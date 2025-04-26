@@ -15,6 +15,7 @@
     background-color: #282c34;
     color: white;
     font-family: Arial, sans-serif;
+    overflow: hidden;
   }
   canvas {
     border: 2px solid white;
@@ -54,6 +55,32 @@
   .game-over button:hover {
     background-color: #e08900;
   }
+  .controls {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+  .controls button {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #ff9500;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .controls button:hover {
+    background-color: #e08900;
+  }
+  @media (max-width: 768px) {
+    .controls {
+      display: flex;
+    }
+  }
 </style>
 </head>
 <body>
@@ -62,6 +89,14 @@
 <div class="game-over" id="gameOverScreen">
   <div id="finalScore"></div>
   <button onclick="restartGame()">Retry</button>
+</div>
+<div class="controls">
+  <button onclick="changeDirection(0, -1)">↑</button>
+  <div style="display: flex; gap: 10px;">
+    <button onclick="changeDirection(-1, 0)">←</button>
+    <button onclick="changeDirection(1, 0)">→</button>
+  </div>
+  <button onclick="changeDirection(0, 1)">↓</button>
 </div>
 
 <audio id="eatSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
@@ -144,19 +179,27 @@ function restartGame() {
   gameLoop = setInterval(updateGame, 150);
 }
 
+function changeDirection(dx, dy) {
+  if ((dx === 1 && direction.x === -1) || (dx === -1 && direction.x === 1) ||
+      (dy === 1 && direction.y === -1) || (dy === -1 && direction.y === 1)) {
+    return;
+  }
+  direction = { x: dx, y: dy };
+}
+
 document.addEventListener('keydown', event => {
   switch (event.key) {
     case 'ArrowUp':
-      if (direction.y === 0) direction = { x: 0, y: -1 };
+      changeDirection(0, -1);
       break;
     case 'ArrowDown':
-      if (direction.y === 0) direction = { x: 0, y: 1 };
+      changeDirection(0, 1);
       break;
     case 'ArrowLeft':
-      if (direction.x === 0) direction = { x: -1, y: 0 };
+      changeDirection(-1, 0);
       break;
     case 'ArrowRight':
-      if (direction.x === 0) direction = { x: 1, y: 0 };
+      changeDirection(1, 0);
       break;
   }
 });
